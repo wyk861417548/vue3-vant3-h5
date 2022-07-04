@@ -1,26 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <router-view  v-slot="{Component}">
+    <!-- <keep-alive>
+      <component :is="Component" :key="route.name" v-if="route.meta.keepAlive"></component>
+    </keep-alive> -->
+    <!-- :key="route.name" v-if="!route.meta.keepAlive" -->
+    <component :is="Component" ></component>
+  </router-view>
+
+  <!-- :key="route.name" -->
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+<script setup>
+import { useRoute} from 'vue-router'
+let route = useRoute();
 </script>
 
 <style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import url('~@/static/css/common.css');
 </style>
