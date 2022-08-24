@@ -4,19 +4,6 @@ import 'vant/lib/index.css';
 import { Lazyload } from 'vant';//图片懒加载
 import Vconsole from 'vconsole'
 
-// v-lazy 单独配置 自定义加载以及错误图片
-// computed:{
-//   LazyloadImg(){
-//     return (img)=>{
-//       return {
-//         src: img,
-//         error: require('@/assets/images/health.png'),
-//         loading: require('@/assets/images/health.png'),
-//       }
-//     }
-//   }
-// },
-
 export default function install(app){
   app.use(Vant);
   

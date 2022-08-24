@@ -6,16 +6,18 @@
 
     <div class="my-upload flex">
       <!-- 已上传图片展示区域 -->
-      <div class="uploadList upBox" @click.stop="" @click="handleView(item)" v-for='(item,index) in uploadList' :key='index'>
-        <slot name="container">
-          <img :src="item[path]" style="width:100%;height:100%;" alt="图片">
-          <p class="upBox-del"><van-icon name="cross" @click.stop="handleRemove(index)"/></p>
-        </slot>
+      <div class="uploadList upBox" :class="!mode?'upBoxDefault':'dash'" @click="handleView(item)" v-for='(item,index) in uploadList' :key='index'>
+        <img :src="item[path]" alt="图片">
+        <p class="upBox-del" @click.stop="handleRemove(index)"><van-icon name="cross"/></p>
       </div>
 
       <!-- 选择图片区域 -->
-      <label v-if="max > uploadList.length" class="upload upBox">
-        <van-icon name="plus" class="j-full-center" />
+      <label v-if="max > uploadList.length" class="upBox" :class="!mode?'upBoxDefault':'dash'">
+        <!-- 可自定义icon -->
+        <p class="j-full-center">
+          <slot name='icon'><van-icon name="plus" /></slot>
+        </p>
+        
         <input ref="inputer" type="file" accept="image/*" multiple style="display: none;" @change="change">
       </label>
 
@@ -49,10 +51,15 @@ export default {
       type:String,
       default:"upload"
     },
+
+    // 样式模式 false：背景模式  true：线条模式
+    mode:{
+      type:Boolean,
+      default:false
+    }
   },
   data () {
     return {
-
       // 预览图片
       preview:false,
 
@@ -88,21 +95,16 @@ export default {
       var param = new FormData();
 
       this.$config.kCompass({fileinput:file[0]}).then(({result}) => {
-        // console.log('res',res);
         var files = this.$config.dataURLtoFile(result,file[0].name)
-        console.log('file',files,file[0]);
         param.append('file',files);
-
         this.upload(param);
-      }).catch((err) => {
-        console.log('err',err);
       });
     },
 
 
     // 上传图片
     upload(param){
-      this.$postmult(this.$api.common.upload,param).then(res=>{
+      this.$api.common.upload(param).then(res=>{
         this.$refs.inputer.value = null;
         this.uploadList.push(res.data);
       })
@@ -110,6 +112,7 @@ export default {
 
     // 预览大图
     handleView(item){
+      this.$banScroll();
       if(item && item[this.path]){
         this.previewImg = item[this.path];
         this.preview = true;
@@ -118,6 +121,7 @@ export default {
 
     // 关闭大图
     closeView(){
+      this.$canScroll();
       this.preview = false;
     },
 
@@ -146,9 +150,9 @@ export default {
       display:inline-block;
       width: 80px;
       height: 80px;
-      margin:0 10px;
-      border: 1px dashed #ddd;
+      margin-right: 10px;
       border-radius:2px;
+      i{color: #ddd;}
       .upBox-del{
         position: absolute;
         top: 0;
@@ -166,26 +170,30 @@ export default {
           transform: scale(.5);
         }
       }
-    }
 
-    .upload{
-      position: relative;
-      display:inline-block;
-      width: 80px;
-      height: 80px;
-      margin:0 10px;
-      border: 1px dashed #ddd;
-      border-radius:2px;
-      i{color: #ddd;}
-      &:hover{
-        border-color:#108ee9;
-        i{color: #108ee9;}
+      &.upBoxDefault{
+        background-color: #f7f8fa;
+        &:active{
+          background-color: #f2f3f5;
+        }
+      }
+      &.dash{
+        border: 1px dashed #ddd;
+        &:active{
+          border-color:#108ee9;
+          i{color: #108ee9;}
+        }
       }
     }
 
     .uploadList{
       border: 1px solid @bg-color-upload;
       overflow: hidden;
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit:cover
+      }
       .mask{
         opacity: 0;
         i{

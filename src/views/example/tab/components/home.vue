@@ -8,8 +8,6 @@
       </section>
     </main>
 
-
-
   </div>
 
 </template>
