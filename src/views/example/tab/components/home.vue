@@ -1,13 +1,11 @@
 <template>
   <div class="j-full-curbox">
-
     <main>
       <section class="box">
         <h2 class="box-title">前往栗子</h2>
-        <button class="el-button el-button-primary" @click="skip">栗子</button>
+        <button class="el-button el-button-primary" @click="$skip('/example/index')">栗子</button>
       </section>
     </main>
-
   </div>
 
 </template>
@@ -18,23 +16,10 @@ export default {
     return {};
   },
 
-  created(){
+  created(){},
 
-  },
-
-  methods: {
-    skip(){
-      // this.$store.commit('setToken','xxxxxxxxx');
-      this.$router.push({path:'/index'})
-    }
-  }
+  methods: {}
 }
 </script>
 <style lang='less' scoped>
-  header{}
-
-  main{}
-
-  footer{}
-
 </style>

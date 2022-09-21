@@ -1,166 +1,103 @@
-/**axios封装
- * 请求拦截、相应拦截、错误统一处理
- */
 import axios from 'axios';
 import F from "@/utils/config.js";
 
 // 环境的切换
-axios.defaults.baseURL = process.env.VUE_APP_URL;
-
-// 请求超时时间
+// axios.defaults.baseURL =process.env.VUE_APP_URL;
+// 请求超时时间10000
 axios.defaults.timeout = 10000;
 //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 axios.defaults.withCredentials = true;
 // post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 
+// 创建axios实例
+const service = axios.create({
+  // axios中请求配置有baseURL选项，表示请求URL公共部分
+  baseURL: process.env.VUE_APP_URL,
+  // 超时
+  timeout: 30000
+})
 
-// loading加载动画第一次
+// loading加载动画计数器
 var count = 0;
+
 // 请求拦截器
-axios.interceptors.request.use(
+service.interceptors.request.use(
   config => {
-    ++count == 1 ? F.loading() : "";
+    loading(true);
     return config;
   },
   error => {
-    ++count == 1 ? F.loading() : "";
+    loading(true);
     return Promise.error(error);
   }
 )
 
 // 响应拦截器
-axios.interceptors.response.use(
-  response => {
-    --count == 0 ? F.loading(false) : "";
-    if (response.status === 200) {
-      return Promise.resolve(response);
-    } else {
-      return Promise.reject(response);
-    }
+service.interceptors.response.use(res => {
+    loading(false);
+    return Promise.resolve(res);
   },
   // 服务器状态码不是200的情况    
   error => {
-    --count == 0 ? F.loading(false) : "";
+    loading(false)
     if (error.response) {
-      switch (error.response.status) {
-        // 401: 未登录                             
-        case 401:
-          break;
-          // 403 token过期                            
+      switch (error.response.status) {       
+        case 401: 
+          break;          
         case 403:
-          break;
-          // 404请求不存在                
+          break;   
         case 404:
           F.tip('网络请求不存在');
           break;
-          // 其他错误，直接抛出错误提示                
         default:
-          F.tip(error.msg ? error.msg : "请稍后再试");
-          F.loading(false);
-
+          F.tip("请稍后再试");
       }
       return Promise.reject(error.response);
     }
+    F.tip(error.msg ? error.msg : "请稍后再试");
   }
 );
+
+/**
+ * @param {*} params 
+ * @param {Object} params.opt 用于自定义处理配置 
+ * @param {Object} opt.back true 表示无论code为多少，都会返回不会进入统一错误处理
+ * @returns 
+ */
+export function request(params){
+  return new Promise((resolve,reject) => {
+    service(params).then(res=>{
+      return requestHandle(res,params.opt,resolve,reject);
+    }).catch(()=>{})
+  })
+}
+
+// 统一请求动画计数
+function loading(boolean){
+  if(boolean){
+    ++count == 1 ? F.loading() : "";
+  }else{
+    --count == 0 ? F.loading(false) : "";
+  }
+}
+
+// 请求返回处理
+function requestHandle(res,opt={},resolve,reject){
+  if (res && res.data.code == 200 || opt.back) {
+    resolve(res.data)
+    return;
+  }
+  reject(res)
+  res && handle(res.data)
+}
 
 //错误统一处理
 function handle(res) {
   //  未登录处理
-  if (res && (res.code == "401" || res.code == '-9001')) {
+  if (res.code == "401" || res.code == '-9001') {
+    F.tip(res.msg ? res.msg : "请稍后再试");
     return;
   }
-
   F.tip(res.msg ? res.msg : "请稍后再试");
-}
-
-/** 
- * get方法，对应get请求 
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
- * @param {Object} opt 用于自定义处理配置
- */
-export function get(url, params,opt={}) {
-  F.loading(false);
-  F.loading();
-
-  return new Promise((resolve, reject) => {
-
-    axios.get(url,{params})
-      .then(res => {
-        F.loading(false);
-
-        if (res && res.data.code == 200 || opt.back) {
-          resolve(res.data);
-        } else {
-          handle(res.data)
-        }
-      })
-      .catch(err => {
-        F.loading(false);
-        reject(err)
-      })
-  });
-}
-/** 
- * post方法，对应post请求 
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
- * @param {Object} opt 用于自定义处理配置
- */
-export function post(url, params,opt={}) {
-  F.loading(false);
-  F.loading();
-
-
-  return new Promise((resolve, reject) => {
-
-    axios.post(url, params)
-      .then(res => {
-
-        F.loading(false);
-
-        if (res && res.data.code == "200" || opt.back) {
-          resolve(res.data);
-        } else {
-          handle(res.data)
-        }
-      })
-      .catch(err => {
-        F.loading(false);
-        reject(err)
-      })
-  });
-}
-
-
-/** 
- * postmult方法，对应post请求  提交图片
- * @param {String} url [请求的url地址] 
- * @param {Object} params [请求时携带的参数] 
- * @param {Object} opt 用于自定义处理配置
- */
-export function postmult(url, params, opt={}) {
-  F.loading(false);
-  F.loading();
-
-  return new Promise((resolve, reject) => {
-
-    axios.post(url, params, {'Content-Type': 'multipart/form-data'},)
-      .then(res => {
-
-        F.loading(false);
-
-        if (res.data.code == "200" || opt.back) {
-          resolve(res.data);
-        } else {
-          handle(res.data)
-        }
-      })
-      .catch(err => {
-        F.loading(false);
-        reject(err.data)
-      })
-  });
 }
