@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import api from "@/utils/api.js";//公共api
 import config from "@/utils/config.js";//公共方法
-import GlobalComponents from "@/static/js/index.js";//  全局公共组件注册
+import GlobalComponents from "@/utils/automatic.js";//  全局公共组件注册
 import plugins from "@/utils/plugins.js";// 各种插件引入
 import 'lib-flexible/flexible'
 

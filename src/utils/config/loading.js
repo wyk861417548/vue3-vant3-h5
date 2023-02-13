@@ -2,7 +2,7 @@
  * @param {*} bool 为真或不传 显示loading， false关闭loading
  * @returns 
  */
-export function loading(bool) {
+ export function loading(bool) {
   if (bool == undefined || bool) {
     if(document.querySelector("#Y_tip")){
       return;
@@ -35,14 +35,14 @@ export function tip(val, col, bool) {
   if(document.querySelector("#Y_tip")){
     return;
   }
-  var div = document.createElement("span");
+  var div = document.createElement("div");
   div.id = "Y_tip";
   if (!val) {
     val = '暂无数据';
   }
-  div.innerHTML = `<div style="position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);background:${col?col:'#999'};opacity:0.8;z-index:999;font-size:0.15rem;color:#fff;padding:0.07rem;border-radius:5px;">${val}</div>`;
+  div.innerHTML = `<span style="position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);background:${col?col:'#999'};opacity:0.8;z-index:999;color:#fff;">${val}</span>`;
   document.body.appendChild(div);
   setTimeout(function () {
     document.body.removeChild(document.querySelector("#Y_tip"));
-  }, bool ? bool : 2000)
+  }, bool ? bool : 1500)
 }

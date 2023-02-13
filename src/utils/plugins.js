@@ -15,8 +15,8 @@ export default function install(app){
   
   app.use(Lazyload, {
     lazyComponent: true,
-    error: require('@/static/images/lazy/error.png'),
-    loading: require('@/static/images/lazy/default.png'),
+    error: require('@/assets/images/lazy/error.png'),
+    loading: require('@/assets/images/lazy/default.png'),
     preLoad: 1,
     attempt: 1,
   });

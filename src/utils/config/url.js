@@ -2,14 +2,16 @@
  * @param {*} search 地址 不传默认获取当前地址栏
  * @returns 
  */
-export function getParams(search) {
+ export function getParams(search) {
   var r = {}
-  if (search == undefined) {
-    search = window.location.href.split('?')[1];
-  } else {
-    search = search.split('?')[1];
-  }
+  search = search == undefined?window.location.href.split('?')[1]:search.split('?')[1];
   if (!search) return;
+
+  // 解决参数拼在hash前面问题
+  if(search && search.indexOf("#") != '-1'){
+    search = search.slice(0,search.indexOf("#"));
+  }
+
   var arr = search.split('&');
   if (!arr.length) return;
 
@@ -39,9 +41,8 @@ export function httprequestquery(list){
  * @param {*} boolen boolen 如果不存在或者为真就加密  boolen false解密
  * @returns 
  */
- export function httprequestencode(list,boolen){
+ export function httprequestencode(list,boolen=true){
   let params = [];
-  boolen?boolen:true;
   for(let i in list){
     let item =boolen?window.btoa(unescape(encodeURIComponent(list[i]))):decodeURIComponent(escape(window.atob(list[i])));
     params.push(i + "=" + item);

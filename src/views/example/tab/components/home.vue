@@ -1,7 +1,7 @@
 <template>
   <div class="j-full-curbox">
     <main>
-      <section class="box">
+      <section class="custom-box">
         <h2 class="box-title">前往栗子</h2>
         <button class="el-button el-button-primary" @click="$skip('/example/index')">栗子</button>
       </section>

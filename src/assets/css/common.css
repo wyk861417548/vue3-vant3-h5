@@ -1,5 +1,6 @@
 body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td { margin:0; padding:0; }
 body, button, input, select, textarea { font:12px/1.5tahoma, arial, \5b8b\4f53; }
+body{-webkit-overflow-scrolling:touch}
 h1, h2, h3, h4, h5, h6{ font-size:100%; }
 address, cite, dfn, em, var { font-style:normal; }
 code, kbd, pre, samp { font-family:couriernew, courier, monospace; }
@@ -21,12 +22,14 @@ input[type=checkbox]{width:auto;}
 input[type=radio]{width:auto;}
 input::placeholder{color:#959595;}
 textarea{width:100%;border:1px solid #dcdee2;border-radius: 2px; -webkit-appearance: none;}
-textarea:focus{outline: none;border:1px solid #57a3f3;}
+textarea:focus{outline: none;border:1px solid #57a3f3;resize: none;}
 img{max-width: 100%;}
 i{margin-right:2px ;}
 
 /* 隐藏高德地图标识 */
 .amap-logo,.amap-copyright{display: none !important;}
+/* 用于解决禁用页面滚动事件，页面取消事件后页面还是不能滚动 */
+*{ touch-action: pan-y;}
 
 /* h5 清除样式 */
 figure{margin:0; padding:0;}
@@ -83,9 +86,10 @@ input[type="checkbox"]:checked::after{content: "";position: absolute;left: 50%;t
 /* flex布局 */
 .flex{display: flex;}
 .flex-fit{flex:1;}
+.j-flex{display: flex;justify-content: space-between;align-items: center;}
 .j-flex-a{display: flex;align-items: center;}
 .j-flex-b{display: flex;justify-content: space-between;}
-.j-flex{display: flex;justify-content: space-between;align-items: center;}
+.j-flex-flow{display: flex;flex-flow: column;justify-content: space-between;}
 .j-flex-col{display: flex;flex-direction: column;}
 .j-flex-row{ display: flex;flex-direction: row;flex-wrap: wrap;}
 
@@ -95,12 +99,14 @@ input[type="checkbox"]:checked::after{content: "";position: absolute;left: 50%;t
 /* 占满当前父元素盒子 */
 .j-full-curbox{position:absolute;top:0;left:0;right:0;bottom:0;margin:0;overflow:auto;}
 .j-full-fixed{position:fixed;top:0;left:0;right:0;bottom:0;margin:0;overflow:auto;}
+.j-vh{width: 100vw;height: 100vh;box-sizing: border-box;overflow: auto;}
 
 /* 居中 */
 .j-full-center{position: absolute;top:50%;left: 50%;transform: translate(-50%,-50%);}
 
 /* 虚线 */
-.j-line{width: 100%;height:1px;background-image: linear-gradient(to right,#ccc 0%,#ccc 50%,transparent 50%);background-size: 15px 1px;background-repeat: repeat-x;}
+.j-line-x{width: 100%;height:1px;background-image: linear-gradient(to right,#ccc 0%,#ccc 50%,transparent 50%);background-size: 15px 1px;background-repeat: repeat-x;}
+.j-line-y{width: 1px;height:140px;background-image: linear-gradient(to bottom,#ccc 0%,#ccc 50%,transparent 50%);background-size: 1px 15px;background-repeat: repeat-y;}
 
 /* flex布局下 失效 文字超出省略号 单行  和 多行 webkit-line-clamp设置行数*/
 .text-wrap{text-overflow: ellipsis;white-space: normal;word-break: break-all;}
@@ -108,6 +114,10 @@ input[type="checkbox"]:checked::after{content: "";position: absolute;left: 50%;t
 
 /*flex布局下也能生效 文字超出省略号   */
 .text-overflowMut{display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden;}
+
+/* 图片与背景cover */
+.j-img-fit{object-fit:cover}
+.j-bg-fit{background-repeat: no-repeat;background-position:center;background-size: cover;}
 
 .m-5{margin:5px;}
 .mb-5{margin-bottom:5px;}
@@ -205,6 +215,9 @@ input[type="checkbox"]:checked::after{content: "";position: absolute;left: 50%;t
 .font700{font-weight: 700;}
 .font800{font-weight: 800;}
 .font900{font-weight: 900;}
+
+/* 自定义 tip提示 */
+#Y_tip span{font-size:14px;padding:7px;border-radius:5px;}
 
 /* 加载动画css 配合config.js中 loading使用*/
 .l-box .l-circle {width: 60px;height: 60px;position: absolute;left: 50%;top: 50%;transform: translate(-30px,-30px);}
