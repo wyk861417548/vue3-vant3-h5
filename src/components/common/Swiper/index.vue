@@ -22,7 +22,7 @@ import { swiper, swiperSlide } from "vue-awesome-swiper";
 import "swiper/dist/css/swiper.css";
 
 export default {
-  props: ["option"],
+  props: ["options"],
   components: {
     swiper,
     swiperSlide,
@@ -69,7 +69,7 @@ export default {
     };
   },
   created() {
-    this.merge(this.option);
+    this.merge(this.options);
   },
 
   computed: {
@@ -90,10 +90,10 @@ export default {
       this.swiper.autoplay.start()
     },
 
-    merge(option) {
-      if (option) {
-        for (const key in option) {
-          this.swiperOption[key] = option[key];
+    merge(options) {
+      if (options) {
+        for (const key in options) {
+          this.swiperOption[key] = options[key];
         }
       }
       return this.swiperOption;
@@ -102,7 +102,7 @@ export default {
 
   mounted() {},
   watch: {
-    option: {
+    options: {
       handler(newVal) {
         for (const key in newVal) {
           this.swiperOption[key] = newVal[key];

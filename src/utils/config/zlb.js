@@ -22,7 +22,7 @@ export function scanZFB(type){
     window.ap.scan({
       type: type?'qr':'bar'
     },(res)=>{
-      resolve(res.code)
+      res.code && resolve(res.code)
     });
   })
 }
@@ -44,7 +44,7 @@ export function scanZLB(type){
 
 // 浙里办拨打电话
 export function call(phone){
-  if(window.ZWJSBridge){
+  if(window.ZWJSBridge && [3,4,5].includes(checkBrowser())){
     ZWJSBridge.phoneCall({
       corpId:phone
     });

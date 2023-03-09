@@ -1,28 +1,17 @@
 <template>
-  <!-- j-full-curbox 当前元素占满全屏  j-flex-col垂直布局 -->
-  <div class='j-full-curbox j-flex-col'>
+  <header></header>
 
-    <header></header>
+  <main></main>
 
-    <main></main>
-
-    <footer></footer>
-
-  </div>
+  <footer></footer>
 
 </template>
 
-<script>
-export default {
-  data () {
-    return {};
-  },
-
-  created(){},
-
-  methods: {
-  }
-}
+<script setup>
+import { ref,reactive } from 'vue';
+const state = reactive({
+  date:''
+})
 </script>
 <style lang='less' scoped>
   header{}
