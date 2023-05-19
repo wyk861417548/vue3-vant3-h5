@@ -1,68 +1,43 @@
 <template>
-  <Scroll ref="scroll" @scroll="getData">
-    <div class="list"  v-for='(item,index) in dataList' :key='index' @click="$skip('/example/list/detail')">
-      {{item.name}} -- {{item.age}}
-    </div>
+  <Scroll ref="scroll" @load="getData">
+    <router-link to="/example/list/detail">
+      <div class="list"  v-for='(item,index) in state.list' :key='index'>
+        {{item.name}} -- {{item.age}}
+      </div>
+    </router-link>
   </Scroll>
 
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      dataList:[],
+<script setup>
+import { ref,reactive, onMounted, getCurrentInstance } from 'vue';
 
-      count:1,
+const {proxy} = getCurrentInstance()
+const props = defineProps({type:String})
+const scroll = ref(null)
+const state = reactive({
+  list:[]
+})
 
-      data:{
-        //列表初始页码
-        current: 1,   
+let data = {
+  //列表初始页码
+  page: 1,   
+  //每页条数
+  size:10
+}
 
-        //每页条数
-        size:10,   
-      },
-    };
-  },
+onMounted(()=>{
+  getData()
+})
 
-  created(){
-    this.getData();
-  },
-
-  methods: {
-    getData(){
-      setTimeout(()=>{
-        this.count++;
-        for (let i = 0; i < 10; i++) {
-          this.dataList.push({name:this.count+"---i---"+i,age:i})
-        }
-
-        this.isScroll(this.dataList,30)
-      },500)
-    },
-
-    //上拉加载默认状态 0：可加载， 1：无数据， 2已结束， 3:加载中
-    isScroll(list,total){
-      const SCROLL = this.$refs.scroll;
-
-      //处理数据还在加载中，已经离开本页面
-      if(!SCROLL) return;
-
-      // 加载状态结束
-      SCROLL.status = 0;
-
-      // 无数据
-      if(list.length < 1){
-        SCROLL.status = 1;
-        return;
-      }
-
-      // 如果已经是最后一页了 结束
-      if(total <= list.length){
-        SCROLL.status = 2;
-      }
-    },
-  }
+const getData = ()=>{
+  setTimeout(()=>{
+    data.page++;
+    for (let i = 0; i < 10; i++) {
+      state.list.push({name:props.type + '-' +data.page+"---i---"+i,age:i})
+    }
+    proxy.$isScroll(scroll,state.list,30)
+  },1500)
 }
 </script>
 <style lang='less' scoped>
@@ -74,5 +49,4 @@ export default {
     line-height: 100px;
     text-align: center;
   }
-
 </style>

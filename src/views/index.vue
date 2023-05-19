@@ -1,23 +1,18 @@
 <template>
-  <header></header>
-
-  <main></main>
-
-  <footer></footer>
+  <main>
+    <section class="custom-box">
+      <h2 class="box-title">前往栗子</h2>
+      <router-link to="/example">
+        <button class="el-button el-button-primary" >
+          栗子
+        </button>
+      </router-link>
+    </section>
+  </main>
 
 </template>
 
 <script setup>
-import { ref,reactive } from 'vue';
-const state = reactive({
-  date:''
-})
 </script>
 <style lang='less' scoped>
-  header{}
-
-  main{}
-
-  footer{}
-
 </style>

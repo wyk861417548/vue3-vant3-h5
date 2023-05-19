@@ -1,57 +1,54 @@
 <template>
-  <div id="qrCode" ref="qrCodeDiv"></div>
+  <div id="qrCode" ref="qrCodeDiv" @click="proxy.$ImagePreview([img])"></div>
 </template>
 
-<script>
+<script setup>
 import QRCode from 'qrcodejs2';
-export default {
-  props: ["code", "color"],
+import { ref,reactive,nextTick,onMounted,watch,getCurrentInstance} from 'vue';
 
-  data() {
-    return {
-      qrcode: "",
+const props = defineProps({
+  // 二维码内容
+  text:{type:String,default:''},
+  // 二维码颜色
+  color:{type:String,default:'#333'},
+  // 是否开启点击二维码预览
+  preview:{type:Boolean,default:true}
+})
 
-      text: "Qrcode"
-    };
-  },
+const {proxy} = getCurrentInstance()
 
-  mounted() {
-    this.setCode();
-  },
+let img = ref('')
+let qrCodeDiv = ref(null)
+
+onMounted(() => {init()})
 
 
-  methods: {
-    setCode() {
-      this.qrcode = new QRCode(this.$refs.qrCodeDiv, {
-        text: this.code || this.text,
-        width: 1080,
-        height: 1080,
-        colorDark: this.color || "#333333", //二维码颜色
-        colorLight: "#ffffff", //二维码背景色
-        correctLevel: QRCode.CorrectLevel.L//容错率，L/M/H
-      })
-    },
+function init(){
+  new QRCode(qrCodeDiv.value, {
+    text: props.text,
+    width: 1080, //防止分辨率大的时候模糊
+    height: 1080, //防止分辨率大的时候模糊
+    colorDark: props.color, //二维码颜色
+    colorLight: "#fff", //二维码背景色
+    correctLevel: QRCode.CorrectLevel.L//容错率，L/M/H
+  })
 
-    clearCode() {
-      let code = document.getElementById("qrCode");
-      code.innerHTML = '';
-    },
-  },
-
-  watch: {
-    // 不使用makeCode  是因为  不能再动态改变颜色
-    code(newVal) {
-      this.text = newVal;
-      // this.qrcode.makeCode(newVal);
-      this.clearCode();
-      this.$nextTick(function () {
-        this.setCode();
-      })
-    }
-  }
+  setTimeout(()=>{
+    img = qrCodeDiv.value.querySelector('img').src;
+  },0)
 }
-</script>
 
+function reset() {
+  let text = document.getElementById("qrCode");
+  text.innerHTML = '';
+}
+
+watch(()=>props.text,()=>{
+  reset()
+  nextTick(()=>{init()})
+})
+
+</script>
 <style scoped>
 /* 注意这里别写lang='less'或者其他  不然>>>不生效 */
 #qrCode>>>canvas {

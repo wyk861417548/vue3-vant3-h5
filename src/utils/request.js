@@ -1,8 +1,6 @@
 import axios from 'axios';
 import F from "@/utils/config.js";
 
-// 环境的切换
-// axios.defaults.baseURL =process.env.VUE_APP_URL;
 // 请求超时时间10000
 axios.defaults.timeout = 10000;
 //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
@@ -15,7 +13,7 @@ const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
   baseURL: process.env.VUE_APP_URL,
   // 超时
-  timeout: 30000
+  timeout: 5000
 })
 
 // loading加载动画计数器
@@ -24,11 +22,9 @@ var count = 0;
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    loading(true);
     return config;
   },
   error => {
-    loading(true);
     return Promise.error(error);
   }
 )
@@ -55,7 +51,6 @@ service.interceptors.response.use(res => {
       }
       return Promise.reject(error.response);
     }
-    F.tip(error.msg ? error.msg : "请稍后再试");
   }
 );
 
@@ -63,13 +58,20 @@ service.interceptors.response.use(res => {
  * @param {*} params 
  * @param {Object} params.opt 用于自定义处理配置 
  * @param {Object} opt.back true 表示无论code为多少，都会返回不会进入统一错误处理
+ * @param {Object} opt.loading false 表示当前接口不使用全局自定义加载动画
  * @returns 
  */
 export function request(params){
+  if(params.opt && params.opt.loading === false){
+    ++count
+  }else{
+    loading(true);
+  }
+
   return new Promise((resolve,reject) => {
     service(params).then(res=>{
-      return requestHandle(res,params.opt,resolve,reject);
-    }).catch(()=>{})
+      requestHandle(res,params.opt,resolve,reject);
+    }).catch((err)=>{reject(err)})
   })
 }
 

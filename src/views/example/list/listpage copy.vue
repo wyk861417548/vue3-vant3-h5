@@ -8,37 +8,51 @@
 
     <footer>
       <keep-alive>
-        <components :is='tabs[curIdx].com'></components>
+        <components :is='curCom' :type="curCom"></components>
       </keep-alive>
     </footer>
 
   </div>
+
 </template>
 
-<script setup>
-import { ref,reactive } from 'vue';
+<script>
 import listson1 from './components/listson.vue'
 import listson2 from './components/listson.vue'
 
-let curIdx = ref(0)
-const tabs =[
-  {name:'listson1',title:"listson1",com:listson1},
-  {name:'listson2',title:"listson2",com:listson2},
-]
-console.log('tabs[curIdx].com',tabs[curIdx].com);
-const changeTab = (name) => {
-  curIdx.value = name=='listson1'?0:1
+export default {
+  components:{
+    listson1,
+    listson2,
+  },
+  
+  data () {
+    return {
+      tabs:[
+        {name:'listson2',title:"listson1"},
+        {name:'listson1',title:"listson2"},
+      ],
+
+      curCom:'listson2'
+    };
+  },
+
+  methods: {
+    // 点击切换按钮
+    changeTab(name){
+      this.curCom=name;
+    },
+  }
 }
-
-
 </script>
 <style lang='less' scoped>
-.j-vh{
-  padding:0 15px;
-  background-color: #fff;
-}
-footer{
-  position: relative;
-  flex: 1;
-}
+  .j-vh{
+    padding:0 15px;
+    background-color: #fff;
+  }
+  footer{
+    position: relative;
+    flex: 1;
+  }
+
 </style>

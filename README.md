@@ -2,7 +2,7 @@
 
 此项目是基于vue-cli3.x构建的,基于vant框架的h5模板。
 ## 技术栈
-vue3 + pinia + vue-router +  + ES6/7 + less + vant
+vue3 + pinia + vue-router +  + ES6/7 + less + vant
 
 ## 环境
 ```
@@ -46,22 +46,15 @@ ios(){
         ├──suitable            # 浙里办适老化配置
 │   ├── components             # 全局公用组件
         ├──common              # 全局公共组件（“自动注册” 遵循一个文件夹里面定义index.vue格式，文件夹名称作为全局组件使用名称）
-        ├──code                # 发送验证码倒计时
-        ├──qrcode              # 生产二维码
-        ├──swiper              # 轮播图
-        ├──upload              # 上传图片
 │   ├── router                 # 路由
 │   ├── store                  # 全局store管理
 │   ├── utils                  # 全局公用方法
         ├──config（文件夹）     # 公共方法拆分的js文件
-          ├──brower            # 游览器判断
           ├──compressorjs      # 图片压缩以及处理拍照上传旋转90度问题（搭配kCompass压缩使用）
-          ├──idCard            # 身份证处理相关
           ├──kCompass          # 图片压缩（自定义通过canvas进行压缩，压缩效率比compressorjs好，所以不使用compressorjs的压缩）
           ├──LazyloadImg       # 图片懒加载（配置）
           ├──loading           # 全局动画加载
           ├──url               # 地址栏处理相关
-          ├──zlb               # 浙里办支付宝相关
         ├──config              # 公共方法
         ├──request             # 公共请求封装
         ├──validator           # 提交校验
@@ -113,7 +106,7 @@ export default {
 
       data:{
         //列表初始页码
-        current: 1,   
+        page: 1,   
 
         //每页条数
         size:10,   
@@ -132,15 +125,15 @@ export default {
   methods: {
     initData(){
       this.dataList = [];
-      this.data.current = 1;
+      this.data.page = 1;
       this.$refs.scroll.status =3;
       this.getData();
     },
     getData(){
       setTimeout(()=>{
-        this.data.current++;
+        this.data.page++;
         for (let i = 0; i < 10; i++) {
-          this.dataList.push({name:this.data.current+"---i---"+i,age:i})
+          this.dataList.push({name:this.data.page+"---i---"+i,age:i})
         }
 
         this.$isScroll(this.$refs.scroll,this.dataList,30)
@@ -153,86 +146,35 @@ export default {
 
 ## 3.基于vant的上传组件
 ```
-<!-- 自定义上传 -->
-<upload path='url' :limit='3' :defaultFileList="defaultFileList" @change="changeUpload" :customFile="customFile" :isCustom="true" @customUpLoad="customUpLoad"></upload>
+<upload v-model='state.pic'></upload>
 
-<!-- 简单使用 也支持vant上传组件的自定义样式-->
-<upload @change="changeUpload"></upload>
+const state = reactive({
+  pic:'https://img01.yzcdn.cn/vant/leaf.jpg',
 
-methods:{
-  // 自定义上传
-  customUpLoad(FormData){
-    // customFile 中 需要保证url属性存在
-    this.$api.common.upload(FormData).then(res=>{
-      this.customFile = res;
-    })
-  },
-
-  changeUpload({name,value}){
-    console.log(name,value)
-  },
-}
-
+  // pic:[{url:'https://img01.yzcdn.cn/vant/leaf.jpg'}]
+})
 ```
 
 ### Props
 
 | 参数 | 说明                                         | 类型   | 默认值 |
 | :--- | -------------------------------------------- | :----- | :----- |
-| limit  | *最大上传数*                                 | Number | 1      |
+| maxCount  | *最大上传数*                                 | Number | 1      |
 | path | *上传接口返回图片字段* | String | url   |
-| name | *用于父组件接受已上传的图片名称*             | String | upload |
-| icon | *中间展示图标,只支持vant图标*             | String | plus |
-| defaultFileList | *设置默认展示图片 （注意：必须包含url值 即图片地址 [{url:'xxx'}]）* *             | Array | [] |
-| isCustom | *是否启用自定义上传*             | Boolean | false |
-| customFile | *自定义上传返回结果（搭配customUpLoad事件使用） 注意：必须包含url值,即图片地址{url:'xxx'}*             | Object | {} |
-
-### Events
-
-| 事件名  | 说明     | 回调参数                  |
-| :------ | -------- | :------------------------ |
-| @change | 上传回调 | {name:String,value:Array} |
-| @customUpLoad | 自定义上传（上传图片的值） | new FormData |
+| fileType | *上传图片类型*             | Array | ['jpg','png','jpeg'] |
+| maxSize | *上传大小*             | Number | 10 |
+| size | *预览图和上传区域的尺寸 默认单位px*             | Number或String | 80 |
+| value | *默认展示图片，string类型逗号拼接，Array需要保证url属性存在*             | String或Array | / |
+| icon | *中间展示图标,vant图标或者图片路径*             | String | plus |
 
 ## 4.Qrcode 二维码
 ```
-<Qrcode code='二维码组件'></Qrcode>
+<Qrcode text='二维码组件'></Qrcode>
 ```
 ### Props
 | 参数 | 说明                                         | 类型   | 默认值 |
 | :--- | -------------------------------------------- | :----- | :----- |
-| code  | 二维码值                                 | String |  无  |
+| text  | 二维码值                                 | String |  无  |
 | color | 二维码颜色 | String | #333 |
 | preview | 是否开启二维码点击预览（基于vant） | Boolean | true |
-
-## 5.自定义上传图片组件
-```
-<upload :mode="false" path='fullUrl' :max='3' @change="changeUpload">
-  //自定义icon
-  <template v-slot:icon>
-    <van-icon name="photograph" size="25" />
-  </template>
-</upload>
-
-methods:{
-  changeUpload({name,value}){
-    
-  },
-}
-```
-
-### Props
-
-| 参数 | 说明                                         | 类型   | 默认值 |
-| :--- | -------------------------------------------- | :----- | :----- |
-| max  | *最大上传数*                                 | Number | 1      |
-| path | *上传接口返回图片字段*（预览展示的图片地址） | String | path   |
-| name | *用于父组件接受已上传的图片名称*             | String | upload |
-| mode | *上传ui模式(false:背景色模式 true:虚线模式)*             | Boolean | false |
-
-### Events
-
-| 事件名  | 说明     | 回调参数                  |
-| :------ | -------- | :------------------------ |
-| @change | 上传回调 | {name:String,value:Array} |
 

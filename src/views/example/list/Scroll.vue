@@ -1,72 +1,64 @@
 <template>
-  <Scroll ref="scroll" @scroll="getData">
-    <div class="list"  v-for='(item,index) in dataList' :key='index' @click="$skip('/example/list/detail')">
+  <Scroll ref="scroll" @load="getData">
+    <div class="list"  v-for='(item,index) in state.list' :key='index' @click="router.push('/example/list/detail')">
       {{item.name}} -- {{item.age}}
     </div>
   </Scroll>
-
 </template>
 
-<script>
-import keepAlive from '@/mixins/keepAlive.js'
-export default {
-  mixins:[keepAlive],
-  data () {
-    return {
-      init:false,
+<script setup>
+  import { ref,reactive, onActivated, getCurrentInstance } from 'vue';
+  import keepAlive from '@/mixins/keepAlive.js'
+  import { useRoute, useRouter } from 'vue-router';
+  const scroll = ref(null)
+  const route = useRoute()
+  const router = useRouter()
+  const {proxy} = getCurrentInstance();
 
-      dataList:[],
+  const state = reactive({
+    init:false,
+    list:[]
+  })
 
-      count:1,
-
-      data:{
-        //列表初始页码
-        current: 1,   
-
-        //每页条数
-        size:10,   
-      },
-    };
-  },
-
-  activated(){
-    // 如果不是从详情页进入 init 为了解决页面刷新导致数据重新加载问题
-    if(!this.$route.meta.isBack){
-      this.initData();
-    }else if(!this.init){
-      this.init = true;
-      this.initData();
-    }
-  },
-
-  methods: {
-    initData(){
-      this.dataList = [];
-      this.data.current = 1;
-      this.$refs.scroll.status =3;
-      this.getData();
-    },
-    getData(){
-      setTimeout(()=>{
-        this.data.current++;
-        for (let i = 0; i < 10; i++) {
-          this.dataList.push({name:this.data.current+"---i---"+i,age:i})
-        }
-        
-        this.$isScroll(this.$refs.scroll,this.dataList,30)
-      },500)
-    },
+  let data = {
+    //列表初始页码
+    page: 1,   
+    //每页条数
+    size:10
   }
-}
+
+  onActivated(() => {
+    if(!route.meta.isBack || !state.init){
+      state.init = false
+      init()
+    }
+  })
+  
+  const init = () => {
+    state.list.length = 0;
+    data.page = 1;
+    scroll.value.state = 3;
+    getData();
+  }
+  
+  const getData = ()=>{
+    setTimeout(()=>{
+      data.page++;
+      for (let i = 0; i < 10; i++) {
+        state.list.push({name:data.page+"---i---"+i,age:i})
+      }
+      proxy.$isScroll(scroll,state.list,30)
+    },1500)
+  }
+
 </script>
 <style lang='less' scoped>
-  .list {
-    margin-top: 20px;
-    height: 100px;
-    color: #fff;
-    background: linear-gradient(to right,#ff6700,#f33);
-    line-height: 100px;
-    text-align: center;
-  }
-
+.list {
+  margin-top: 20px;
+  height: 100px;
+  color: #fff;
+  background: linear-gradient(to right,#ff6700,#f33);
+  line-height: 100px;
+  text-align: center;
+}
 </style>

@@ -2,7 +2,7 @@
  * @param {*} bool 为真或不传 显示loading， false关闭loading
  * @returns 
  */
- export function loading(bool) {
+export function loading(bool) {
   if (bool == undefined || bool) {
     if(document.querySelector("#Y_tip")){
       return;

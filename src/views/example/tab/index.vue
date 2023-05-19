@@ -1,50 +1,34 @@
 <template>
-  <!-- j-full-curbox 当前元素占满全屏  j-flex-col flex垂直布局 -->
   <div class='j-full-curbox j-flex-col'>
     <main>
-      <keep-alive>
-        <component :is="cur"></component>
-      </keep-alive>
+      <section class="j-full-curbox">
+        <keep-alive>
+          <component :is="tabs[curIdx].com"></component>
+        </keep-alive>
+      </section>
     </main>
 
     <footer>
-      <section class="j-v-c" v-for='(item, index) in tab' :key='index' @click="change(item.prop)">
-        <img :src="require(`@/assets/images/tab/${item.prop}${cur == item.prop ? '_active.gif' : '.png'}`)" alt="">
+      <section class="j-v-c" v-for='(item, index) in tabs' :key='index' @click="curIdx=index">
+        <img :src="require(`@/assets/images/tab/${item.icon}${curIdx == index ? '_active.gif' : '.png'}`)" alt="">
         <p>{{ item.name }}</p>
       </section>
     </footer>
-
   </div>
 
 </template>
 
-<script>
+<script setup>
+import {ref} from 'vue';
 import home from "./components/home.vue"
 import my from "./components/my.vue"
-export default {
-  components: {
-    home,
-    my
-  },
-  data() {
-    return {
-      tab: [
-        { name: "首页", prop: "home" },
-        { name: "我的", prop: "my" },
-      ],
 
-      cur: "home"
-    };
-  },
+let curIdx = ref(0)
+const tabs =[
+  { name: "首页",icon:'home',com:home},
+  { name: "我的",icon:'my',com:my},
+]
 
-  created() { },
-
-  methods: {
-    change(cur) {
-      this.cur = cur;
-    }
-  }
-}
 </script>
 <style lang='less' scoped>
 main {

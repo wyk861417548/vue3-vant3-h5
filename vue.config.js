@@ -9,7 +9,7 @@ module.exports = {
     // 配置跨域代理
     proxy: {
       "api/": {//将http://baidui.com"映射为/api
-        target: "http://192.168.0.246:8253/",//需要代理的baserurl，目标地址
+        target: "http://192.168.0.192:8253/",//需要代理的baserurl，目标地址
         changeOrigin: true, //本地会虚拟一个服务端接收你的请求并代你发送该请求
         pathRewrite: {
           "^/api": "" //重写路径，比如将api/aa/bb重写为aa/bb
@@ -29,5 +29,5 @@ module.exports = {
       preProcessor: "less",
       patterns: [path.resolve(__dirname, "./src/assets/less/common.less")]
     }
-  }
+  },
 }
