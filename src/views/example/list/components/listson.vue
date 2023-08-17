@@ -32,12 +32,12 @@ onMounted(()=>{
 
 const getData = ()=>{
   setTimeout(()=>{
-    data.page++;
     for (let i = 0; i < 10; i++) {
-      state.list.push({name:props.type + '-' +data.page+"---i---"+i,age:i})
+      state.list.push({name:props.type,age:(data.page-1)*10+i})
     }
+    data.page++;
     proxy.$isScroll(scroll,state.list,30)
-  },1500)
+  },1000)
 }
 </script>
 <style lang='less' scoped>

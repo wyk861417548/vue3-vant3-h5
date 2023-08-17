@@ -18,7 +18,8 @@ const router = createRouter({
 })
 
 // 全局路由守卫
-router.beforeEach((to,path,next)=>{
+router.beforeEach((to,from,next)=>{
+  useRouterUpdate(to,from)
   if(document.querySelector("#Y_loading")){
     document.body.removeChild(document.querySelector("#Y_loading"));
   }
@@ -26,5 +27,10 @@ router.beforeEach((to,path,next)=>{
   next();
 })
 
+function useRouterUpdate(to,from){
+  if(to.meta.keepAlive){
+    to.meta.isBack = from.meta.isBack?true:false;
+  }
+}
 
 export default router;

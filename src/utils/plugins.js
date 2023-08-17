@@ -3,7 +3,7 @@ import Vant from 'vant';
 import 'vant/lib/index.css';
 import { Lazyload } from 'vant';//图片懒加载
 import Vconsole from 'vconsole'
-import { ImagePreview } from 'vant'; // 图片预览
+import { ImagePreview  } from 'vant'; // 图片预览
 
 
 export default function install(app){

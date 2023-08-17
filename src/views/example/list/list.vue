@@ -1,35 +1,33 @@
 <template>
-  <div class='j-vh j-flex-col'>
-    <van-tabs class="custom-van-tabs pb-10" @change="changeTab" background='transparent' style="width:60vw" line-width='20' color='#3A4675'>
-      <van-tab v-for="(item,index) in tabs" :title="item.title" :name="item.name" :key="index" ></van-tab>
-    </van-tabs>
+  <CachePage>
+    <div class='j-vh j-flex-col'>
+      <van-tabs class="custom-van-tabs pb-10" v-model:active="curIdx"  background='transparent' style="width:60vw" line-width='20' color='#3A4675'>
+        <van-tab v-for="(item,index) in tabs" :title="item.title" :name="item.name" :key="item.name" ></van-tab>
+      </van-tabs>
 
-    <p class="b-b"></p>
-
-    <footer>
-      <keep-alive>
-        <component :is='tabs[curIdx].com' :type='tabs[curIdx].title'></component>
-      </keep-alive>
-    </footer>
-
-  </div>
+      <p class="b-b"></p>
+      
+      <footer>
+        <keep-alive>
+          <component :is='tabs[curIdx].com' :type='tabs[curIdx].title' :key="tabs[curIdx].title"></component>
+        </keep-alive>
+      </footer>
+    </div>
+  </CachePage>
 </template>
 
 <script setup>
 import { ref,reactive, getCurrentInstance } from 'vue';
+import CachePage from '@/components/CachePage/index.vue'
 import listson1 from './components/listson.vue'
 import listson2 from './components/listson.vue'
 
-const {proxy} = getCurrentInstance()
-let curIdx = ref(0)
+const curIdx = ref(0)
+
 const tabs =[
-  {name:'listson1',title:"listson1",com:listson1},
-  {name:'listson2',title:"listson2",com:listson2},
+  {name:0,title:"listson1",com:listson1},
+  {name:1,title:"listson2",com:listson2},
 ]
-const changeTab = (name)=>{
-  console.log('name',name);
-  curIdx.value = name=='listson1'?0:1
-}
 </script>
 <style lang='less' scoped>
 .j-vh{

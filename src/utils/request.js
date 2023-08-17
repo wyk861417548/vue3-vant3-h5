@@ -1,8 +1,12 @@
 import axios from 'axios';
 import F from "@/utils/config.js";
 
-// 请求超时时间10000
-axios.defaults.timeout = 10000;
+// 状态码
+const enums = {
+  SUCCESS:'200', //成功状态码
+  NOTLOGIN:'401', //未授权登录
+}
+
 //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 axios.defaults.withCredentials = true;
 // post请求头
@@ -13,7 +17,7 @@ const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
   baseURL: process.env.VUE_APP_URL,
   // 超时
-  timeout: 5000
+  timeout: 10000
 })
 
 // loading加载动画计数器
@@ -38,17 +42,20 @@ service.interceptors.response.use(res => {
   error => {
     loading(false)
     if (error.response) {
+      let msg = ""; // 处理 HTTP 网络错误
       switch (error.response.status) {       
         case 401: 
           break;          
         case 403:
+          msg = "拒绝访问";
           break;   
         case 404:
-          F.tip('网络请求不存在');
+          msg = "网络请求不存在";
           break;
         default:
-          F.tip("请稍后再试");
+          msg = '请稍后再试'
       }
+      F.tip(msg);
       return Promise.reject(error.response);
     }
   }
@@ -62,11 +69,7 @@ service.interceptors.response.use(res => {
  * @returns 
  */
 export function request(params){
-  if(params.opt && params.opt.loading === false){
-    ++count
-  }else{
-    loading(true);
-  }
+  params.opt && params.opt.loading === false?++count:loading(true);
 
   return new Promise((resolve,reject) => {
     service(params).then(res=>{
@@ -86,7 +89,7 @@ function loading(boolean){
 
 // 请求返回处理
 function requestHandle(res,opt={},resolve,reject){
-  if (res && res.data.code == 200 || opt.back) {
+  if (res && res.data.code == enums.SUCCESS || opt.back) {
     resolve(res.data)
     return;
   }
@@ -97,7 +100,7 @@ function requestHandle(res,opt={},resolve,reject){
 //错误统一处理
 function handle(res) {
   //  未登录处理
-  if (res.code == "401" || res.code == '-9001') {
+  if (res.code == enums.NOTLOGIN) {
     F.tip(res.msg ? res.msg : "请稍后再试");
     return;
   }

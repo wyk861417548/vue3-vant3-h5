@@ -1,5 +1,5 @@
 <template>
-  <div id="qrCode" ref="qrCodeDiv" @click="proxy.$ImagePreview([img])"></div>
+  <div id="qrCode" ref="qrCodeDiv"></div>
 </template>
 
 <script setup>
@@ -23,7 +23,7 @@ let qrCodeDiv = ref(null)
 onMounted(() => {init()})
 
 
-function init(){
+const init = ()=>{
   new QRCode(qrCodeDiv.value, {
     text: props.text,
     width: 1080, //防止分辨率大的时候模糊
@@ -32,13 +32,9 @@ function init(){
     colorLight: "#fff", //二维码背景色
     correctLevel: QRCode.CorrectLevel.L//容错率，L/M/H
   })
-
-  setTimeout(()=>{
-    img = qrCodeDiv.value.querySelector('img').src;
-  },0)
 }
 
-function reset() {
+const reset = ()=>{
   let text = document.getElementById("qrCode");
   text.innerHTML = '';
 }

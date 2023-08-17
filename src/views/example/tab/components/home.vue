@@ -51,6 +51,7 @@
 
   const datePicker = ref(null)
   const picker = ref(null)
+  const hello = ref(null)
 
   const state = reactive({
     pic:'https://img01.yzcdn.cn/vant/leaf.jpg',

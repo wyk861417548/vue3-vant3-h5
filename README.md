@@ -41,9 +41,6 @@ ios(){
         ├──images              # 图片
         ├──less                # 自定义全局less
         ├──css                 # 自全局css
-    ├── mixins                 # 代码混入
-        ├──keepAlive           # 页面缓存
-        ├──suitable            # 浙里办适老化配置
 │   ├── components             # 全局公用组件
         ├──common              # 全局公共组件（“自动注册” 遵循一个文件夹里面定义index.vue格式，文件夹名称作为全局组件使用名称）
 │   ├── router                 # 路由
@@ -77,7 +74,7 @@ ios(){
 ## 1.懒加载图片组件使用（$config.LazyloadImg(图片地址)）
 ```
 <section v-for="(item,index) in imgList" :key="index">
-  <img v-lazy="item.img" alt="" style="width:200px;height:200px;">
+  <img v-lazy="item.img" alt="" class="img">
 </section>
 
 imgList:[
@@ -88,59 +85,56 @@ imgList:[
 
 ## 2.原生scroll（单页面无切换），如果有切换请看示例/example/list（新建中间页来处理缓存问题）
 ```
-<Scroll ref="scroll" @scroll="getData">
-  <div class="list"  v-for='(item,index) in dataList' :key='index'>
+<Scroll ref="scroll" @load="getData">
+  <div class="list"  v-for='(item,index) in state.list' :key='index' @click="router.push('/example/list/detail')">
     {{item.name}} -- {{item.age}}
   </div>
 </Scroll>
 
-<script>
-import keepAlive from '@/mixins/keepAlive.js'
-export default {
-  mixins:[keepAlive],
-  data () {
-    return {
-      init:false,
+<script setup>
+  import { ref,reactive, onActivated, getCurrentInstance } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  const scroll = ref(null)
+  const route = useRoute()
+  const router = useRouter()
+  const {proxy} = getCurrentInstance();
 
-      dataList:[],
+  const state = reactive({
+    init:false,
+    list:[]
+  })
 
-      data:{
-        //列表初始页码
-        page: 1,   
-
-        //每页条数
-        size:10,   
-      },
-    };
-  },
-
-  activated(){
-    // 如果不是从详情页进入 init为了解决在详情页面刷新，导致数据不在加载问题
-    if(!this.$route.meta.isBack || !this.init){
-      this.init = true;
-      this.initData();
-    }
-  },
-
-  methods: {
-    initData(){
-      this.dataList = [];
-      this.data.page = 1;
-      this.$refs.scroll.status =3;
-      this.getData();
-    },
-    getData(){
-      setTimeout(()=>{
-        this.data.page++;
-        for (let i = 0; i < 10; i++) {
-          this.dataList.push({name:this.data.page+"---i---"+i,age:i})
-        }
-
-        this.$isScroll(this.$refs.scroll,this.dataList,30)
-      },500)
-    },
+  let data = {
+    //列表初始页码
+    page: 1,   
+    //每页条数
+    size:10
   }
-}
+
+  onActivated(() => {
+    if(!route.meta.isBack || !state.init){
+      state.init = true
+      init()
+    }
+  })
+  
+  const init = () => {
+    state.list.length = 0;
+    data.page = 1;
+    scroll.value.status = 3;
+    getData();
+  }
+  
+  const getData = ()=>{
+    setTimeout(()=>{
+      data.page++;
+      for (let i = 0; i < 10; i++) {
+        state.list.push({name:data.page+"---i---"+i,age:i})
+      }
+      proxy.$isScroll(scroll,state.list,30)
+    },1000)
+  }
+
 </script>
 ```
 

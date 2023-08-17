@@ -13,19 +13,20 @@
       {{status == 2?'没有更多了':'加载中...'}}
     </div>
   </div>
-
 </template>
 
 <script>
-import { ref,reactive, onActivated, nextTick, toRefs } from 'vue';
+import { ref,reactive, onActivated,onMounted, nextTick, toRefs } from 'vue';
 export default{
   setup(props,context){
     const scroll = ref(null);
     const bottom = 10; // 距离底部还有多远触发
     const status = ref(3);//上拉加载默认状态 0：可加载 1：无数据 2已结束 3:加载中
     let scrollTop = 10; // 滚动距离
-    
-    onActivated(() => {setScrollTop()})
+
+    onActivated(() => {
+      setScrollTop()
+    })
 
     // 监听滚动  上拉加载默认状态 status 0：可加载 1：无数据 2已结束 3:加载中
     const onScroll = (e) => {
@@ -50,14 +51,16 @@ export default{
     // 设置离开前的位置距离
     const setScrollTop = (top) => {
       nextTick(()=>{
-        scroll.scrollTop = top || scrollTop;
+        console.log('scroll.value',scroll.value,scroll.value.scrollTop);
+        scroll.value.scrollTop = top || scrollTop;
       })
     }
 
     return {
       setScrollTop,
       onScroll,
-      status
+      status,
+      scroll
     }
   }
 }

@@ -8,7 +8,6 @@
 
 <script setup>
   import { ref,reactive, onActivated, getCurrentInstance } from 'vue';
-  import keepAlive from '@/mixins/keepAlive.js'
   import { useRoute, useRouter } from 'vue-router';
   const scroll = ref(null)
   const route = useRoute()
@@ -29,7 +28,7 @@
 
   onActivated(() => {
     if(!route.meta.isBack || !state.init){
-      state.init = false
+      state.init = true
       init()
     }
   })
@@ -37,7 +36,7 @@
   const init = () => {
     state.list.length = 0;
     data.page = 1;
-    scroll.value.state = 3;
+    scroll.value.status = 3;
     getData();
   }
   
@@ -48,7 +47,7 @@
         state.list.push({name:data.page+"---i---"+i,age:i})
       }
       proxy.$isScroll(scroll,state.list,30)
-    },1500)
+    },1000)
   }
 
 </script>
