@@ -75,7 +75,6 @@ export default{
     }
     
     watch(()=>props.modelValue,(newVal)=>{
-      console.log('newVal',newVal);
       if(newVal){
         fileList.value = !Array.isArray(newVal) ? !Array.isArray(newVal) && (newVal.split(',').map(item=>({url:item}))) : newVal;
       }

@@ -22,7 +22,7 @@ export default{
     const scroll = ref(null);
     const bottom = 10; // 距离底部还有多远触发
     const status = ref(3);//上拉加载默认状态 0：可加载 1：无数据 2已结束 3:加载中
-    let scrollTop = 10; // 滚动距离
+    let scrollTop = 0; // 滚动距离
 
     onActivated(() => {
       setScrollTop()
@@ -50,10 +50,7 @@ export default{
 
     // 设置离开前的位置距离
     const setScrollTop = (top) => {
-      nextTick(()=>{
-        console.log('scroll.value',scroll.value,scroll.value.scrollTop);
-        scroll.value.scrollTop = top || scrollTop;
-      })
+      scroll.value.scrollTop = top || scrollTop;
     }
 
     return {

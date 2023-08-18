@@ -1,41 +1,23 @@
 <template>
-  <CachePage>
-    <div class='j-vh j-flex-col'>
-      <van-tabs class="custom-van-tabs pb-10" v-model:active="curIdx"  background='transparent' style="width:60vw" line-width='20' color='#3A4675'>
-        <van-tab v-for="(item,index) in tabs" :title="item.title" :name="item.name" :key="item.name" ></van-tab>
-      </van-tabs>
-
-      <p class="b-b"></p>
-      
-      <footer>
-        <keep-alive>
-          <component :is='tabs[curIdx].com' :type='tabs[curIdx].title' :key="tabs[curIdx].title"></component>
-        </keep-alive>
-      </footer>
-    </div>
-  </CachePage>
+  <listpage v-if="init"></listpage>
 </template>
 
 <script setup>
-import { ref,reactive, getCurrentInstance } from 'vue';
-import CachePage from '@/components/CachePage/index.vue'
-import listson1 from './components/listson.vue'
-import listson2 from './components/listson.vue'
+import { nextTick, onActivated, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import listpage from './listpage.vue'
 
-const curIdx = ref(0)
+let init = ref(false);
+const route = useRoute();
 
-const tabs =[
-  {name:0,title:"listson1",com:listson1},
-  {name:1,title:"listson2",com:listson2},
-]
+onActivated(()=>{
+  if(!route.meta.isBack){
+    init.value = false;
+    nextTick(()=>init.value = true)
+  }else if(!init.value){
+    init.value = true;
+  }
+})
 </script>
 <style lang='less' scoped>
-.j-vh{
-  padding:0 15px;
-  background-color: #fff;
-}
-footer{
-  position: relative;
-  flex: 1;
-}
 </style>
